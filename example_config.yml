@@ -1,0 +1,6 @@
+# Telegram bot token
+token:
+# MySQL DSN
+dsn: user:pass@tcp(127.0.0.1:3306)/database
+# Log level
+loglevel: informational
