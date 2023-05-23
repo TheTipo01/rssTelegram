@@ -1,6 +1,11 @@
 # Telegram bot token
 token:
+
+# How often to check for new posts
+duration: 4h0m0s
+
 # MySQL DSN
 dsn: user:pass@tcp(127.0.0.1:3306)/database
+
 # Log level
 loglevel: informational

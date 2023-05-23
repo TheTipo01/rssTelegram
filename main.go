@@ -55,7 +55,7 @@ func init() {
 
 	execQuery(tblUsers)
 	loadUsers()
-	go startCron()
+	go startCron(cfg.Duration)
 }
 
 func main() {
@@ -75,11 +75,11 @@ func main() {
 	b.Start()
 }
 
-func startCron() {
+func startCron(duration time.Duration) {
 	time.Sleep(time.Second)
 
 	cron := gocron.NewScheduler(time.Local)
-	_, _ = cron.Every(6).Hours().Do(checkAndSend)
+	_, _ = cron.Every(duration).Do(checkAndSend)
 	cron.StartAsync()
 }
 
