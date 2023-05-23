@@ -9,6 +9,7 @@ require (
 	github.com/kkyr/fig v0.3.1
 	github.com/microcosm-cc/bluemonday v1.0.24
 	github.com/mmcdole/gofeed v1.2.1
+	github.com/pkg/errors v0.9.1
 	gopkg.in/telebot.v3 v3.1.3
 )
 

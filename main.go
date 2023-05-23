@@ -8,6 +8,7 @@ import (
 	"github.com/kkyr/fig"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/mmcdole/gofeed"
+	"github.com/pkg/errors"
 	tb "gopkg.in/telebot.v3"
 	"strings"
 	"time"
@@ -51,7 +52,7 @@ func init() {
 		return
 	}
 
-	sanitizer = bluemonday.NewPolicy().AllowElements("b", "i", "a", "code", "pre")
+	sanitizer = bluemonday.NewPolicy().AllowElements("b", "strong", "i", "em", "u", "ins", "s", "strike", "del", "a", "tg-emoji", "code", "pre")
 
 	execQuery(tblUsers)
 	loadUsers()
@@ -79,7 +80,10 @@ func startCron(duration time.Duration) {
 	time.Sleep(time.Second)
 
 	cron := gocron.NewScheduler(time.Local)
-	_, _ = cron.Every(duration).Do(checkAndSend)
+	_, err := cron.Every(duration).Do(checkAndSend)
+	if err != nil {
+		lit.Error("Error starting cron job, %s", err.Error())
+	}
 	cron.StartAsync()
 }
 
@@ -90,7 +94,13 @@ func checkAndSend() {
 		for i := len(rss) - 1; i >= 0; i-- {
 			item := rss[i]
 			if item.PublishedParsed.After(c.LatestDate) {
-				_, _ = b.Send(tb.ChatID(c.chatID), sanitizer.Sanitize(item.Description)+"\n\n"+item.Link, tb.ModeHTML)
+				_, err := b.Send(tb.ChatID(c.chatID), sanitizer.Sanitize(item.Content)+"\n\n"+item.Link, tb.ModeHTML)
+				if err != nil && errors.Is(err, tb.ErrTooLongMessage) {
+					_, err = b.Send(tb.ChatID(c.chatID), sanitizer.Sanitize(item.Description)+"\n\n"+item.Link, tb.ModeHTML)
+					if err != nil {
+						lit.Error("Error sending post with title %s: %s", item.Title, err.Error())
+					}
+				}
 				updateLatestDate(id, *item.PublishedParsed)
 			}
 		}
