@@ -16,6 +16,7 @@ import (
 
 var (
 	token     string
+	duration  time.Duration
 	db        *sql.DB
 	channels  map[int]*channel
 	b         *tb.Bot
@@ -33,6 +34,7 @@ func init() {
 	}
 
 	token = cfg.Token
+	duration = cfg.Duration
 
 	// Set lit.LogLevel to the given value
 	switch strings.ToLower(cfg.LogLevel) {
@@ -56,7 +58,6 @@ func init() {
 
 	execQuery(tblUsers)
 	loadUsers()
-	go startCron(cfg.Duration)
 }
 
 func main() {
@@ -72,11 +73,13 @@ func main() {
 		return
 	}
 
+	go startCron()
+
 	lit.Info("rssTelegram started")
 	b.Start()
 }
 
-func startCron(duration time.Duration) {
+func startCron() {
 	time.Sleep(time.Second)
 
 	cron := gocron.NewScheduler(time.Local)
