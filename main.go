@@ -54,6 +54,8 @@ func init() {
 		return
 	}
 
+	db.SetConnMaxLifetime(time.Minute * 3)
+
 	sanitizer = bluemonday.NewPolicy().AllowElements("b", "strong", "i", "em", "u", "ins", "s", "strike", "del", "a", "tg-emoji", "code", "pre")
 
 	execQuery(tblUsers)
