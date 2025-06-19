@@ -98,7 +98,7 @@ func checkAndSend() {
 		// Iterate backwards over all the items, and send only the ones that are newer than the latestDate
 		for i := len(rss) - 1; i >= 0; i-- {
 			item := rss[i]
-			if item.PublishedParsed.After(c.LatestDate) {
+			if item.PublishedParsed.After(c.LatestDate) && item.PublishedParsed.Before(time.Now()) {
 				_, err := b.Send(tb.ChatID(c.chatID), sanitizer.Sanitize(item.Content)+"\n\n"+item.Link, tb.ModeHTML)
 				if err != nil && errors.Is(err, tb.ErrTooLongMessage) {
 					_, err = b.Send(tb.ChatID(c.chatID), sanitizer.Sanitize(item.Description)+"\n\n"+item.Link, tb.ModeHTML)
