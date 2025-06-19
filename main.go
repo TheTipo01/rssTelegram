@@ -9,7 +9,7 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/mmcdole/gofeed"
 	"github.com/pkg/errors"
-	tb "gopkg.in/telebot.v3"
+	tb "gopkg.in/telebot.v4"
 	"strings"
 	"time"
 )
